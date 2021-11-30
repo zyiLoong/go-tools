@@ -56,7 +56,7 @@ func main() {
 	}
 
 	if clearUnused {
-		for k, path := range allClassMap {
+		for k, path := range unUsedMap {
 			println(k)
 			println(path)
 			os.Remove(path)
@@ -77,8 +77,9 @@ func findUsedClass(class string, classMap map[string]string, resultMap *map[stri
 		line := scanner.Text()
 		if strings.HasPrefix(line, "import") {
 			class := getClassFromImport(line)
-			// 工程内定义的class
-			if strings.Contains(class, commonPackagePrefix) {
+			// 确认是工程内定义的class
+			// 确认这个类没有被添加过，避免循环导入
+			if strings.Contains(class, commonPackagePrefix) && (*resultMap)[class] != true {
 				classList = append(classList, class)
 			}
 		} else if strings.Contains(line, " class ") {
